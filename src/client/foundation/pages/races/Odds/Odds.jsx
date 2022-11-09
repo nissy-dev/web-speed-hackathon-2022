@@ -1,8 +1,8 @@
-import moment from "moment-timezone";
 import React, { useCallback, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
+import { faInfoCircle, FontAwesomeIcon } from "../../../components/icons/icons";
 import { Container } from "../../../components/layouts/Container";
 import { Section } from "../../../components/layouts/Section";
 import { Spacer } from "../../../components/layouts/Spacer";
@@ -11,7 +11,7 @@ import { TabNav } from "../../../components/navs/TabNav";
 import { Heading } from "../../../components/typographies/Heading";
 import { useFetch } from "../../../hooks/useFetch";
 import { Color, Radius, Space } from "../../../styles/variables";
-import { formatTime } from "../../../utils/DateUtils";
+import { dayjs, formatTime } from "../../../utils/DateUtils";
 import { jsonFetcher } from "../../../utils/HttpUtils";
 
 import { OddsRankingList } from "./internal/OddsRankingList";
@@ -61,7 +61,7 @@ export const Odds = () => {
     return <Container>Loading...</Container>;
   }
 
-  const isRaceClosed = moment(data.closeAt).isBefore(new Date());
+  const isRaceClosed = dayjs(data.closeAt).isBefore(new Date());
 
   return (
     <Container>
@@ -93,7 +93,10 @@ export const Odds = () => {
         <Spacer mt={Space * 4} />
 
         <Callout $closed={isRaceClosed}>
-          <i className="fas fa-info-circle" />
+          <FontAwesomeIcon
+            className="font-awesome inline-block leading-none fill-current"
+            icon={faInfoCircle}
+          />
           {isRaceClosed
             ? "このレースの投票は締め切られています"
             : "オッズをクリックすると拳券が購入できます"}

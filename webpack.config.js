@@ -3,6 +3,8 @@ const path = require("path");
 
 const CopyPlugin = require("copy-webpack-plugin");
 const nodeExternals = require("webpack-node-externals");
+const BundleAnalyzerPlugin =
+  require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 function abs(...args) {
   return path.join(__dirname, ...args);
@@ -16,9 +18,9 @@ const DIST_PUBLIC = abs("./dist/public");
 /** @type {Array<import('webpack').Configuration>} */
 module.exports = [
   {
-    devtool: "inline-source-map",
+    devtool: false,
     entry: path.join(SRC_ROOT, "client/index.jsx"),
-    mode: "development",
+    mode: "production",
     module: {
       rules: [
         {
@@ -29,7 +31,7 @@ module.exports = [
           type: "asset/source",
         },
         {
-          exclude: /[\\/]esm[\\/]/,
+          exclude: /node_modules/,
           test: /\.jsx?$/,
           use: {
             loader: "babel-loader",
@@ -38,8 +40,8 @@ module.exports = [
                 [
                   "@babel/preset-env",
                   {
-                    modules: "cjs",
-                    spec: true,
+                    corejs: 3,
+                    useBuiltIns: "usage",
                   },
                 ],
                 "@babel/preset-react",
@@ -57,14 +59,21 @@ module.exports = [
       new CopyPlugin({
         patterns: [{ from: PUBLIC_ROOT, to: DIST_PUBLIC }],
       }),
+      // new BundleAnalyzerPlugin(),
     ],
     resolve: {
+      alias: {
+        react: "preact/compat",
+        "react-dom": "preact/compat",
+        "react-dom/test-utils": "preact/test-utils", // Must be below test-utils
+        "react/jsx-runtime": "preact/jsx-runtime",
+      },
       extensions: [".js", ".jsx"],
     },
     target: "web",
   },
   {
-    devtool: "inline-source-map",
+    devtool: false,
     entry: path.join(SRC_ROOT, "server/index.js"),
     externals: [nodeExternals()],
     mode: "development",

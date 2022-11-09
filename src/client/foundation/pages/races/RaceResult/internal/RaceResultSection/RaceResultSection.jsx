@@ -1,6 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 
+import {
+  faHandPeace,
+  FontAwesomeIcon,
+} from "../../../../../components/icons/icons";
 import { Color, FontSize, Space } from "../../../../../styles/variables";
 
 const Wrapper = styled.div`
@@ -22,7 +26,11 @@ const Wrapper = styled.div`
 export const RaceResultSection = () => {
   return (
     <Wrapper>
-      <i className="far fa-hand-peace" />
+      {/* <i className="far fa-hand-peace" /> */}
+      <FontAwesomeIcon
+        className="font-awesome inline-block leading-none fill-current"
+        icon={faHandPeace}
+      />
       <div>結果はまだありません</div>
     </Wrapper>
   );
