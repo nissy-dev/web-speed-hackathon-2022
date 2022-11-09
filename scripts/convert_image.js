@@ -2,8 +2,8 @@ const fs = require("fs");
 
 const sharp = require("sharp");
 
-const IMAGE_DIR = "../public/assets/images_";
-const IMAGE_OUTDIR = "../public/assets/images";
+const IMAGE_DIR = "../public/assets/images_/races";
+const IMAGE_OUTDIR = "../public/assets/images/races";
 
 const listFiles = (dir) =>
   fs
@@ -30,12 +30,12 @@ listFiles(IMAGE_DIR).forEach((filePath) => {
 
   const outFile = outPath.slice(0, -3) + "avif";
   // const globalRegex = new RegExp("profiles", "g");
-  let size = 640;
+  let size = 225;
   // if (globalRegex.test(outFile)) {
   //   size = 144;
   // }
   sharp(filePath)
-    .resize({ fit: "cover", width: size })
+    .resize({ fit: "cover", height: size })
     .avif({
       quality: 80,
     })
