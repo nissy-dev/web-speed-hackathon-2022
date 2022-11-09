@@ -27,10 +27,7 @@ export const RaceResultSection = () => {
   return (
     <Wrapper>
       {/* <i className="far fa-hand-peace" /> */}
-      <FontAwesomeIcon
-        className="font-awesome inline-block leading-none fill-current"
-        icon={faHandPeace}
-      />
+      <FontAwesomeIcon icon={faHandPeace} />
       <div>結果はまだありません</div>
     </Wrapper>
   );

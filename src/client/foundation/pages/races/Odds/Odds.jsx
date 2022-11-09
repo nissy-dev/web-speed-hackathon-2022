@@ -93,10 +93,7 @@ export const Odds = () => {
         <Spacer mt={Space * 4} />
 
         <Callout $closed={isRaceClosed}>
-          <FontAwesomeIcon
-            className="font-awesome inline-block leading-none fill-current"
-            icon={faInfoCircle}
-          />
+          <FontAwesomeIcon icon={faInfoCircle} />
           {isRaceClosed
             ? "このレースの投票は締め切られています"
             : "オッズをクリックすると拳券が購入できます"}
