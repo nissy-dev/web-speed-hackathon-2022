@@ -1,12 +1,6 @@
 import difference from "lodash/difference";
 import slice from "lodash/slice";
-import React, {
-  Suspense,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
@@ -20,11 +14,9 @@ import { Color, Radius, Space } from "../../styles/variables";
 import { dayjs, isSameDay } from "../../utils/DateUtils";
 import { authorizedJsonFetcher, jsonFetcher } from "../../utils/HttpUtils";
 
-// import { ChargeDialog } from "./internal/ChargeDialog";
+import { ChargeDialog } from "./internal/ChargeDialog";
 import { HeroImage } from "./internal/HeroImage";
 import { RecentRaceList } from "./internal/RecentRaceList";
-
-const ChargeDialog = React.lazy(() => import("./internal/ChargeDialog"));
 
 /**
  * @param {Model.Race[]} races
@@ -85,26 +77,6 @@ function useTodayRacesWithAnimation(races) {
   return racesToShow;
 }
 
-/**
- * @param {Model.Race[]} todayRaces
- * @returns {string | null}
- */
-function useHeroImage(todayRaces) {
-  const firstRaceId = todayRaces[0]?.id;
-  const url =
-    firstRaceId !== undefined
-      ? `/api/hero?firstRaceId=${firstRaceId}`
-      : "/api/hero";
-  const { data } = useFetch(url, jsonFetcher);
-
-  if (firstRaceId === undefined || data === null) {
-    return null;
-  }
-
-  const imageUrl = `${data.url}?${data.hash}`;
-  return imageUrl;
-}
-
 const ChargeButton = styled.button`
   background: ${Color.mono[700]};
   border-radius: ${Radius.MEDIUM};
@@ -153,11 +125,10 @@ export const Top = () => {
           )
       : [];
   const todayRacesToShow = useTodayRacesWithAnimation(todayRaces);
-  const heroImageUrl = useHeroImage(todayRaces);
 
   return (
     <Container>
-      {heroImageUrl !== null && <HeroImage url={heroImageUrl} />}
+      <HeroImage url="/assets/images/hero.avif" />
 
       <Spacer mt={Space * 2} />
       {userData && (
@@ -184,9 +155,7 @@ export const Top = () => {
           </RecentRaceList>
         )}
       </section>
-      <Suspense fallback={null}>
-        <ChargeDialog ref={chargeDialogRef} onComplete={handleCompleteCharge} />
-      </Suspense>
+      <ChargeDialog ref={chargeDialogRef} onComplete={handleCompleteCharge} />
     </Container>
   );
 };
