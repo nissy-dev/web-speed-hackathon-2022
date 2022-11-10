@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import React, { forwardRef, useCallback, useState } from "react";
-import zenginCode from "zengin-code";
+// import zenginCode from "zengin-code";
 
 import { Dialog } from "../../../../components/layouts/Dialog";
 import { Spacer } from "../../../../components/layouts/Spacer";
@@ -23,6 +23,7 @@ export const ChargeDialog = forwardRef(({ onComplete }, ref) => {
   const [branchCode, setBranchCode] = useState("");
   const [accountNo, setAccountNo] = useState("");
   const [amount, setAmount] = useState(0);
+  const [zenginCode, setZenginCode] = useState(null);
 
   const clearForm = useCallback(() => {
     setBankCode("");
@@ -67,11 +68,15 @@ export const ChargeDialog = forwardRef(({ onComplete }, ref) => {
     [charge, bankCode, branchCode, accountNo, amount, onComplete, clearForm],
   );
 
-  const bankList = Object.entries(zenginCode).map(([code, { name }]) => ({
-    code,
-    name,
-  }));
-  const bank = zenginCode[bankCode];
+  console.log(zenginCode);
+  const bankList =
+    zenginCode !== null
+      ? Object.entries(zenginCode).map(([code, { name }]) => ({
+          code,
+          name,
+        }))
+      : null;
+  const bank = zenginCode !== null ? zenginCode[bankCode] : null;
   const branch = bank?.branches[branchCode];
 
   return (
@@ -86,15 +91,25 @@ export const ChargeDialog = forwardRef(({ onComplete }, ref) => {
               銀行コード
               <input
                 list="ChargeDialog-bank-list"
+                onBlur={() => setZenginCode(null)}
                 onChange={handleCodeChange}
+                onFocus={async () => {
+                  const zenginCode = await import("zengin-code");
+                  setZenginCode(zenginCode);
+                }}
                 value={bankCode}
               />
             </label>
 
             <datalist id="ChargeDialog-bank-list">
-              {bankList.map(({ code, name }) => (
-                <option key={code} value={code}>{`${name} (${code})`}</option>
-              ))}
+              {bankList !== null
+                ? bankList.map(({ code, name }) => (
+                    <option
+                      key={code}
+                      value={code}
+                    >{`${name} (${code})`}</option>
+                  ))
+                : null}
             </datalist>
 
             {bank != null && (

@@ -105,7 +105,6 @@ export const Top = () => {
     if (chargeDialogRef.current === null) {
       return;
     }
-
     chargeDialogRef.current.showModal();
   }, []);
 
@@ -124,7 +123,7 @@ export const Top = () => {
             isSameDay(race.startAt, date),
           )
       : [];
-  const todayRacesToShow = useTodayRacesWithAnimation(todayRaces);
+  // const todayRacesToShow = useTodayRacesWithAnimation(todayRaces);
 
   return (
     <Container>
@@ -147,14 +146,15 @@ export const Top = () => {
       <Spacer mt={Space * 2} />
       <section>
         <Heading as="h1">本日のレース</Heading>
-        {todayRacesToShow.length > 0 && (
+        {todayRaces.length > 0 && (
           <RecentRaceList>
-            {todayRacesToShow.map((race) => (
+            {todayRaces.map((race) => (
               <RecentRaceList.Item key={race.id} race={race} />
             ))}
           </RecentRaceList>
         )}
       </section>
+
       <ChargeDialog ref={chargeDialogRef} onComplete={handleCompleteCharge} />
     </Container>
   );
