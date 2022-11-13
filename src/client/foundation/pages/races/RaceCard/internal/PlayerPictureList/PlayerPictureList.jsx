@@ -32,7 +32,7 @@ const Item = ({ image, name, number }) => {
         lazy
         alt={`${name}選手のプロフィール写真`}
         height={100}
-        src={image}
+        src={`${image.slice(0, -5)}-100-100.webp`}
         width={100}
       />
 
