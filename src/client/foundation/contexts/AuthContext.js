@@ -1,5 +1,7 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
 
+import { BASE_PATH } from "../utils/HttpUtils";
+
 /**
  * @typedef AuthContextValues
  * @property {string | null} userId
@@ -47,7 +49,7 @@ export const useRegister = () => {
   const { setUserId } = useContext(AuthContext);
 
   const register = useCallback(async () => {
-    const res = await fetch("/api/users/me");
+    const res = await fetch(`${BASE_PATH}/api/users/me`);
     const data = await res.json();
     setUserId(data.id);
   }, [setUserId]);
