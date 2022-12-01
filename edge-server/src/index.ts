@@ -19,7 +19,10 @@ type User = {
 
 const app = new Hono<{ Bindings: Env }>();
 
-app.use("/api/*", cors({ origin: "*" }));
+app.use(
+  "/api/*",
+  cors({ origin: "https://web-speed-hackathon-2022-nissy.pages.dev/" }),
+);
 app.use("*", prettyJSON());
 
 app.use("/api/*", async (c, next) => {
@@ -143,7 +146,7 @@ app.get("/api/races/:raceId", async (c) => {
     ...element,
     key: JSON.parse(element.key),
   }));
-  const raceEntries = raceEntryResult?.map((element) => ({
+  const raceEntries = raceEntryResult.map((element) => ({
     ...element,
     player: {
       id: element.playerId,
