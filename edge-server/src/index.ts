@@ -54,7 +54,7 @@ app.get("/api/users/me", async (c) => {
   } else {
     const uuid = crypto.randomUUID();
     const insertStmt = c.env.DB.prepare(
-      "insert into user values (?, DEFAULT, DEFAULT)",
+      "insert into user (id) values (?)",
     ).bind(uuid);
     await insertStmt.run();
     const selectStmt = c.env.DB.prepare("select * from user where id = ?").bind(
