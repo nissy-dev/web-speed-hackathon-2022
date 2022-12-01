@@ -32,10 +32,6 @@ app.use("/api/*", async (c, next) => {
 
 app.use("/api/*", async (c, next) => {
   const userId = c.req.header("x-app-userid");
-  console.log(userId);
-  const test = c.env.DB.prepare("select * from user");
-  console.log(await test.all());
-
   if (userId !== undefined) {
     const stmt = c.env.DB.prepare("select * from user where id = ?").bind(
       userId,
@@ -142,6 +138,7 @@ app.get("/api/races/:raceId", async (c) => {
     return c.json({ message: "Not Found", ok: false }, 404);
   }
 
+  console.log(oddsItemsResult);
   const oddItems = oddsItemsResult.map((element) => ({
     ...element,
     key: JSON.parse(element.key),
@@ -213,26 +210,6 @@ app.post("/api/races/:raceId/betting-tickets", async (c) => {
   const bettingTicket = await selectStmt.first();
 
   return c.json(bettingTicket);
-});
-
-app.post("/api/initialize", async (c) => {
-  const stmt = c.env.DB.prepare(
-    "select name from sqlite_master where type = 'table'",
-  );
-  const { results } = await stmt.all<{ name: string }>();
-  if (results !== undefined) {
-    await c.env.DB.batch(
-      results.map((result) =>
-        c.env.DB.prepare(`drop table if exists ${result.name}`),
-      ),
-    );
-  }
-
-  const object = await c.env.BUCKET.get("dump.sql");
-  if (object !== null) {
-    const migrationSql = await object.text();
-    await c.env.DB.exec(migrationSql);
-  }
 });
 
 export default app;
