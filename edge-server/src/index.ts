@@ -21,7 +21,7 @@ const app = new Hono<{ Bindings: Env }>();
 
 app.use(
   "/api/*",
-  cors({ origin: "https://web-speed-hackathon-2022-nissy.pages.dev/" }),
+  cors({ origin: "https://web-speed-hackathon-2022-nissy.pages.dev" }),
 );
 app.use("*", prettyJSON());
 
@@ -155,8 +155,8 @@ app.get("/api/races/:raceId", async (c) => {
 
   return c.json({
     ...race,
-    trifectaOdds: oddItems,
     entries: raceEntries,
+    trifectaOdds: oddItems,
   });
 });
 
@@ -183,7 +183,7 @@ app.post("/api/races/:raceId/betting-tickets", async (c) => {
     return c.json({ message: "Precondition Failed", ok: false }, 412);
   }
 
-  const { type, key } = await c.req.json<{ type: string; key: number[] }>();
+  const { key, type } = await c.req.json<{ type: string; key: number[] }>();
   if (
     typeof type !== "string" ||
     !Array.isArray(key) ||
