@@ -1,6 +1,6 @@
-export const BASE_PATH = "https://web-speed-hackathon.nissy-dev.workers.dev";
+// export const BASE_PATH = "https://web-speed-hackathon.nissy-dev.workers.dev";
 
-// const BASE_PATH = "http://localhost:8787";
+export const BASE_PATH = "http://localhost:8787";
 
 export const jsonFetcher = async (/** @type {string} */ url) => {
   // const res = await fetch(url, { responseType: "json" });
