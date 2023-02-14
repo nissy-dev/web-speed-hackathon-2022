@@ -2,23 +2,25 @@
 const path = require("path");
 
 const CopyPlugin = require("copy-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 const nodeExternals = require("webpack-node-externals");
+const BundleAnalyzerPlugin =
+  require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 function abs(...args) {
   return path.join(__dirname, ...args);
 }
 
 const SRC_ROOT = abs("./src");
-const PUBLIC_ROOT = abs("./public");
 const DIST_ROOT = abs("./dist");
 const DIST_PUBLIC = abs("./dist/public");
 
 /** @type {Array<import('webpack').Configuration>} */
 module.exports = [
   {
-    devtool: "inline-source-map",
+    devtool: false,
     entry: path.join(SRC_ROOT, "client/index.jsx"),
-    mode: "development",
+    mode: "production",
     module: {
       rules: [
         {
@@ -34,12 +36,21 @@ module.exports = [
           use: {
             loader: "babel-loader",
             options: {
+              plugins: [
+                [
+                  "babel-plugin-styled-components",
+                  {
+                    displayName: false,
+                    ssr: false,
+                  },
+                ],
+              ],
               presets: [
                 [
                   "@babel/preset-env",
                   {
-                    modules: "cjs",
-                    spec: true,
+                    corejs: 3,
+                    useBuiltIns: "usage",
                   },
                 ],
                 "@babel/preset-react",
@@ -51,14 +62,24 @@ module.exports = [
     },
     name: "client",
     output: {
+      filename: "[name].[contenthash].js",
       path: DIST_PUBLIC,
+      publicPath: "/",
     },
     plugins: [
-      new CopyPlugin({
-        patterns: [{ from: PUBLIC_ROOT, to: DIST_PUBLIC }],
+      new HtmlWebpackPlugin({
+        template: "public/index.html",
       }),
+      new CopyPlugin({
+        patterns: [{ from: abs("./public/assets"), to: "assets" }],
+      }),
+      // new BundleAnalyzerPlugin(),
     ],
     resolve: {
+      alias: {
+        react: "preact/compat",
+        "react-dom": "preact/compat",
+      },
       extensions: [".js", ".jsx"],
     },
     target: "web",

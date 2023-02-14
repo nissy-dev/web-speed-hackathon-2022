@@ -1,10 +1,14 @@
-import moment from "moment-timezone";
+import dayjs from "dayjs";
 import React, { useCallback, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
+import { FaInfoCircle } from "../../../components/icons/icons";
 import { Container } from "../../../components/layouts/Container";
-import { Section } from "../../../components/layouts/Section";
+import {
+  PlaceholderSection,
+  Section,
+} from "../../../components/layouts/Section";
 import { Spacer } from "../../../components/layouts/Spacer";
 import { TrimmedImage } from "../../../components/media/TrimmedImage";
 import { TabNav } from "../../../components/navs/TabNav";
@@ -57,27 +61,29 @@ export const Odds = () => {
     [],
   );
 
-  if (data == null) {
-    return <Container>Loading...</Container>;
-  }
-
-  const isRaceClosed = moment(data.closeAt).isBefore(new Date());
+  const isRaceClosed = data ? dayjs(data.closeAt).isBefore(new Date()) : null;
 
   return (
     <Container>
       <Spacer mt={Space * 2} />
-      <Heading as="h1">{data.name}</Heading>
-      <p>
-        開始 {formatTime(data.startAt)} 締切 {formatTime(data.closeAt)}
+      <Heading as="h1" style={{ height: "3rem", width: "100%" }}>
+        {data ? data.name : ""}
+      </Heading>
+      <p style={{ height: "1.5rem", width: "100%" }}>
+        開始 {data ? formatTime(data.startAt) : ""} 締切{" "}
+        {data ? formatTime(data.closeAt) : ""}
       </p>
 
       <Spacer mt={Space * 2} />
-
-      <Section dark shrink>
+      <PlaceholderSection dark shrink>
         <LiveBadge>Live</LiveBadge>
         <Spacer mt={Space * 2} />
-        <TrimmedImage height={225} src={data.image} width={400} />
-      </Section>
+        <TrimmedImage
+          height={225}
+          src={data ? `${data.image.slice(0, -4)}-400-225.webp` : undefined}
+          width={400}
+        />
+      </PlaceholderSection>
 
       <Spacer mt={Space * 2} />
 
@@ -91,34 +97,37 @@ export const Odds = () => {
         </TabNav>
 
         <Spacer mt={Space * 4} />
-
         <Callout $closed={isRaceClosed}>
-          <i className="fas fa-info-circle" />
+          <FaInfoCircle />
           {isRaceClosed
             ? "このレースの投票は締め切られています"
             : "オッズをクリックすると拳券が購入できます"}
         </Callout>
-
         <Spacer mt={Space * 4} />
         <Heading as="h2">オッズ表</Heading>
 
-        <Spacer mt={Space * 2} />
-        <OddsTable
-          entries={data.entries}
-          isRaceClosed={isRaceClosed}
-          odds={data.trifectaOdds}
-          onClickOdds={handleClickOdds}
-        />
+        {data ? (
+          <>
+            <Spacer mt={Space * 2} />
+            <OddsTable
+              entries={data.entries}
+              isRaceClosed={isRaceClosed}
+              odds={data.trifectaOdds}
+              onClickOdds={handleClickOdds}
+            />
+            <Spacer mt={Space * 4} />
+            <Heading as="h2">人気順</Heading>
 
-        <Spacer mt={Space * 4} />
-        <Heading as="h2">人気順</Heading>
-
-        <Spacer mt={Space * 2} />
-        <OddsRankingList
-          isRaceClosed={isRaceClosed}
-          odds={data.trifectaOdds}
-          onClickOdds={handleClickOdds}
-        />
+            <Spacer mt={Space * 2} />
+            <OddsRankingList
+              isRaceClosed={isRaceClosed}
+              odds={data.trifectaOdds}
+              onClickOdds={handleClickOdds}
+            />
+          </>
+        ) : (
+          <div style={{ minHeight: "100vh" }}></div>
+        )}
       </Section>
 
       <TicketVendingModal ref={modalRef} odds={oddsKeyToBuy} raceId={raceId} />

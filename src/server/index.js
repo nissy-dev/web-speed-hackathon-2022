@@ -1,5 +1,7 @@
 import "regenerator-runtime/runtime";
 import fastify from "fastify";
+import compression from "fastify-compress";
+import fastifyCors from "fastify-cors";
 import fastifySensible from "fastify-sensible";
 
 import { User } from "../model/index.js";
@@ -22,6 +24,10 @@ const server = fastify({
       },
 });
 server.register(fastifySensible);
+server.register(compression, { encodings: ["gzip", "deflate"] });
+server.register(fastifyCors, {
+  origin: "https://web-speed-hackathon-2022-nissy.pages.dev",
+});
 
 server.addHook("onRequest", async (req, res) => {
   const repo = (await createConnection()).getRepository(User);
@@ -38,7 +44,10 @@ server.addHook("onRequest", async (req, res) => {
 });
 
 server.addHook("onRequest", async (req, res) => {
-  res.header("Cache-Control", "no-cache, no-store, no-transform");
+  res.header(
+    "Cache-Control",
+    "public, max-age=60, s-maxage=60, stale-while-revalidate=60",
+  );
   res.header("Connection", "close");
 });
 

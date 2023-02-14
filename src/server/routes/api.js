@@ -1,7 +1,7 @@
-import moment from "moment-timezone";
+import dayjs from "dayjs";
 import { Between, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
+import zenginCode from "zengin-code";
 
-import { assets } from "../../client/foundation/utils/UrlUtils.js";
 import { BettingTicket, Race, User } from "../../model/index.js";
 import { createConnection } from "../typeorm/connection.js";
 import { initialize } from "../typeorm/initialize.js";
@@ -14,9 +14,11 @@ export const apiRoute = async (fastify) => {
     const repo = (await createConnection()).getRepository(User);
 
     if (req.user != null) {
+      res.header("Cache-Control", "private, no-store");
       res.send(req.user);
     } else {
       const user = await repo.save(new User());
+      res.header("Cache-Control", "private, no-store");
       res.send(user);
     }
   });
@@ -26,7 +28,7 @@ export const apiRoute = async (fastify) => {
       throw fastify.httpErrors.unauthorized();
     }
 
-    const { amount } = req.body;
+    const { amount } = JSON.parse(req.body);
     if (typeof amount !== "number" || amount <= 0) {
       throw fastify.httpErrors.badRequest();
     }
@@ -36,21 +38,27 @@ export const apiRoute = async (fastify) => {
     req.user.balance += amount;
     await repo.save(req.user);
 
+    res.header("Cache-Control", "private, no-store");
     res.status(204).send();
   });
 
-  fastify.get("/hero", async (_req, res) => {
-    const url = assets("/images/hero.jpg");
-    const hash = Math.random().toFixed(10).substring(2);
+  // fastify.get("/hero", async (_req, res) => {
+  //   const url = assets("/images/hero.jpg");
+  //   const hash = Math.random().toFixed(10).substring(2);
 
-    res.send({ hash, url });
+  //   res.send({ hash, url });
+  // });
+
+  fastify.get("/zenginCode", async (_req, res) => {
+    res.header("Cache-Control", "public, max-age=604800, immutable");
+    res.send({ zenginCode });
   });
 
   fastify.get("/races", async (req, res) => {
     const since =
-      req.query.since != null ? moment.unix(req.query.since) : undefined;
+      req.query.since != null ? dayjs.unix(req.query.since) : undefined;
     const until =
-      req.query.until != null ? moment.unix(req.query.until) : undefined;
+      req.query.until != null ? dayjs.unix(req.query.until) : undefined;
 
     if (since != null && !since.isValid()) {
       throw fastify.httpErrors.badRequest();

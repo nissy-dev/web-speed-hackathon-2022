@@ -29,9 +29,10 @@ const Item = ({ image, name, number }) => {
   return (
     <Stack gap={Space * 1}>
       <TrimmedImage
+        lazy
         alt={`${name}選手のプロフィール写真`}
         height={100}
-        src={image}
+        src={`${image.slice(0, -4)}-100-100.webp`}
         width={100}
       />
 
